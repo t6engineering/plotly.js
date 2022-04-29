@@ -2361,7 +2361,7 @@ axes.drawOne = function(gd, ax, opts) {
             if(ax.mirror && ax.anchor !== 'free') {
                 mirrorPush = {x: 0, y: 0, r: 0, l: 0, t: 0, b: 0};
 
-                mirrorPush[sMirror] = ax.linewidth;
+                mirrorPush[sMirror] = ax.linewidth || 0;
                 if(ax.mirror && ax.mirror !== true) mirrorPush[sMirror] += outsideTickLen;
 
                 if(ax.mirror === true || ax.mirror === 'ticks') {
@@ -2597,12 +2597,13 @@ function getTickLabelUV(ax) {
     var v = TEXTPAD;
 
     var fontSize = ax.tickfont ? ax.tickfont.size : 12;
+    var w = ax.linewidth || 0;
     if(isBottom || isTop) {
         u += fontSize * CAP_SHIFT;
-        v += (ax.linewidth || 0) / 2;
+        v += w / 2;
     }
     if(isLeft || isRight) {
-        u += (ax.linewidth || 0) / 2;
+        u += w / 2;
         v += TEXTPAD;
     }
     if(isInside && side === 'top') {
@@ -2634,7 +2635,7 @@ axes.makeTickPath = function(ax, shift, sgn, len) {
     len = len !== undefined ? len : ax.ticklen;
 
     var axLetter = ax._id.charAt(0);
-    var pad = (ax.linewidth || 1) / 2;
+    var pad = ax.linewidth || 0;
 
     return axLetter === 'x' ?
         'M0,' + (shift + pad * sgn) + 'v' + (len * sgn) :
@@ -2701,7 +2702,7 @@ axes.makeLabelFns = function(ax, shift, angle) {
     if(ax.showticklabels && (labelsOverTicks || ax.showline)) {
         labelStandoff += 0.2 * ax.tickfont.size;
     }
-    labelStandoff += (ax.linewidth || 1) / 2 * (insideTickLabels ? -1 : 1);
+    labelStandoff += (ax.linewidth || 0) / 2 * (insideTickLabels ? -1 : 1);
 
     var out = {
         labelStandoff: labelStandoff,
@@ -3523,7 +3524,7 @@ function drawTitle(gd, ax) {
                     offsetBase += ax.ticklen;
                 }
             }
-            titleStandoff = 10 + offsetBase + (ax.linewidth ? ax.linewidth - 1 : 0);
+            titleStandoff = 10 + offsetBase + (ax.linewidth || 0);
         }
 
         if(!isInside) {
