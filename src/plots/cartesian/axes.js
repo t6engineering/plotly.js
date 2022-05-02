@@ -2889,6 +2889,13 @@ axes.makeTickPath = function(ax, shift, sgn, opts) {
 
     var axLetter = ax._id.charAt(0);
     var pad = (ax.linewidth || 1) / 2;
+    // fix above equation for the case of inside ticks and no line
+    if(
+        !ax.linewidth &&
+        (minor ? ax.minor.ticks : ax.ticks) === 'inside'
+    ) {
+        pad = 0;
+    }
 
     return axLetter === 'x' ?
         'M0,' + (shift + pad * sgn) + 'v' + (len * sgn) :
