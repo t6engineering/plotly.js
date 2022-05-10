@@ -2888,7 +2888,10 @@ axes.makeTickPath = function(ax, shift, sgn, opts) {
         minor ? ax.minor.ticklen : ax.ticklen;
 
     var axLetter = ax._id.charAt(0);
-    var pad = (ax.linewidth || 1) / 2;
+    var pad = ax._lw;
+    if(pad === undefined) {
+        pad = (ax.linewidth || 1) / 2;
+    }
 
     return axLetter === 'x' ?
         'M0,' + (shift + pad * sgn) + 'v' + (len * sgn) :
