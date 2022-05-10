@@ -2894,7 +2894,7 @@ axes.makeTickPath = function(ax, shift, sgn, opts) {
         !ax.linewidth &&
         (minor ? ax.minor.ticks : ax.ticks) === 'inside'
     ) {
-        pad = 0;
+        pad = ax._lw / 2;
     }
 
     return axLetter === 'x' ?
