@@ -1165,7 +1165,7 @@ describe('calculated data and points', function() {
                         // TODO: how to actually calc these? what do these even mean?
                         if(type === 'histogram') expectedAgg = [['a', 2], ['b', 1], ['c', 1]];
                         if(type === 'histogram2d') expectedAgg = [['a', 2 / 3], ['b', 1 / 3], ['c', 1 / 3]];
-                        if(type === 'contour' || type === 'heatmap') expectedAgg = [['a', expectedAgg[0][1] / 3], ['b', expectedAgg[1][1] / 3], ['c', expectedAgg[2][1] / 3]];
+                        if(type === 'contour' || type === 'heatmap') expectedAgg = [['a', Math.pow(expectedAgg[0][1], 1 / 3)], ['b', Math.pow(expectedAgg[1][1], 1 / 3)], ['c', Math.pow(expectedAgg[2][1], 1 / 3)]];
                         if(type === 'histogram2dcontour') expectedAgg = [['a', 2 / 4], ['b', 1 / 4], ['c', 1 / 4]];
 
                         checkAggregatedValue(baseMock, expectedAgg, false, done);
