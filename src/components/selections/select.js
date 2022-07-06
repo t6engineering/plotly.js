@@ -460,7 +460,7 @@ function selectOnClick(evt, gd, xAxes, yAxes, subplot, dragOptions, polygonOutli
             selectionTesters = multiTester(allSelectionDefs, selectionTesters);
 
             for(i = 0; i < searchTraces.length; i++) {
-                traceSelection = searchTraces[i]._module.selectPoints(searchTraces[i], selectionTesters);
+                traceSelection = searchTraces[i]._module.selectPoints(searchTraces[i], selectionTesters, true);
                 thisTracesSelection = fillSelectionItem(traceSelection, searchTraces[i]);
 
                 if(selection.length) {
@@ -488,6 +488,8 @@ function selectOnClick(evt, gd, xAxes, yAxes, subplot, dragOptions, polygonOutli
             if(sendEvents) {
                 gd.emit('plotly_selected', eventData);
             }
+
+            reselect(gd);
         }
     }
 }
@@ -847,40 +849,24 @@ function isOnlyOnePointSelected(searchTraces) {
 function updateSelectedState(gd, searchTraces, eventData) {
     var i;
 
-    // before anything else, update preGUI if necessary
-    for(i = 0; i < searchTraces.length; i++) {
-        var fullInputTrace = searchTraces[i].cd[0].trace._fullInput;
-        var tracePreGUI = gd._fullLayout._tracePreGUI[fullInputTrace.uid] || {};
-        if(tracePreGUI.selectedpoints === undefined) {
-            tracePreGUI.selectedpoints = fullInputTrace._input.selectedpoints || null;
-        }
-    }
-
     var trace;
     if(eventData) {
         var pts = eventData.points || [];
         for(i = 0; i < searchTraces.length; i++) {
             trace = searchTraces[i].cd[0].trace;
-            trace._input.selectedpoints = trace._fullInput.selectedpoints = [];
+            trace._fullInput.selectedpoints = [];
             if(trace._fullInput !== trace) trace.selectedpoints = [];
         }
 
         for(var k = 0; k < pts.length; k++) {
             var pt = pts[k];
-            var data = pt.data;
             var fullData = pt.fullData;
             var pointIndex = pt.pointIndex;
             var pointIndices = pt.pointIndices;
             if(pointIndices) {
-                [].push.apply(data.selectedpoints, pointIndices);
-                if(trace._fullInput !== trace) {
-                    [].push.apply(fullData.selectedpoints, pointIndices);
-                }
+                [].push.apply(fullData.selectedpoints, pointIndices);
             } else {
-                data.selectedpoints.push(pointIndex);
-                if(trace._fullInput !== trace) {
-                    fullData.selectedpoints.push(pointIndex);
-                }
+                fullData.selectedpoints.push(pointIndex);
             }
         }
     } else {
