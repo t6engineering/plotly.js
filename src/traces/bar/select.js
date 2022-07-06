@@ -1,19 +1,23 @@
 'use strict';
 
-module.exports = function selectPoints(searchInfo, selectionTester) {
+module.exports = function selectPoints(searchInfo, selectionTester, selection) {
+    var hadSelection = !!selection;
+    if(!selection) selection = [];
+
     var cd = searchInfo.cd;
     var xa = searchInfo.xaxis;
     var ya = searchInfo.yaxis;
     var trace = cd[0].trace;
     var isFunnel = (trace.type === 'funnel');
     var isHorizontal = (trace.orientation === 'h');
-    var selection = [];
     var i;
 
     if(selectionTester === false) {
-        // clear selection
-        for(i = 0; i < cd.length; i++) {
-            cd[i].selected = 0;
+        if(!hadSelection) {
+            // clear selection
+            for(i = 0; i < cd.length; i++) {
+                cd[i].selected = 0;
+            }
         }
     } else {
         for(i = 0; i < cd.length; i++) {
@@ -28,7 +32,9 @@ module.exports = function selectPoints(searchInfo, selectionTester) {
                 });
                 di.selected = 1;
             } else {
-                di.selected = 0;
+                if(!hadSelection) {
+                    di.selected = 0;
+                }
             }
         }
     }

@@ -1,17 +1,21 @@
 'use strict';
 
-module.exports = function selectPoints(searchInfo, selectionTester) {
+module.exports = function selectPoints(searchInfo, selectionTester, selection) {
+    var hadSelection = !!selection;
+    if(!selection) selection = [];
+
     var cd = searchInfo.cd;
     var xa = searchInfo.xaxis;
     var ya = searchInfo.yaxis;
-    var selection = [];
     var i, j;
 
     if(selectionTester === false) {
-        for(i = 0; i < cd.length; i++) {
-            for(j = 0; j < (cd[i].pts || []).length; j++) {
-                // clear selection
-                cd[i].pts[j].selected = 0;
+        if(!hadSelection) {
+            // clear selection
+            for(i = 0; i < cd.length; i++) {
+                for(j = 0; j < (cd[i].pts || []).length; j++) {
+                    cd[i].pts[j].selected = 0;
+                }
             }
         }
     } else {
@@ -29,7 +33,9 @@ module.exports = function selectPoints(searchInfo, selectionTester) {
                     });
                     pt.selected = 1;
                 } else {
-                    pt.selected = 0;
+                    if(!hadSelection) {
+                        pt.selected = 0;
+                    }
                 }
             }
         }

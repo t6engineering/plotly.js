@@ -298,7 +298,7 @@ function prepSelect(evt, startX, startY, dragOptions, mode) {
         displayOutlines(convertPoly(mergedPolygons, isOpenMode), outlines, dragOptions);
 
         if(isSelectMode) {
-            selectionTesters = reselect(gd, xAxis._id, yAxis._id, selectionTesters, searchTraces, plotinfo);
+            selectionTesters = reselect(gd, xAxis._id, yAxis._id, selectionTesters, searchTraces, plotinfo).selectionTesters;
 
             throttle.throttle(
                 throttleID,
@@ -450,6 +450,11 @@ function selectOnClick(evt, gd, xAxes, yAxes, subplot, dragOptions, polygonOutli
                 gd.emit('plotly_deselect', null);
             }
         } else {
+            var polySelections = reselect(gd); // TODO: could we only pass certain subplots to speed up reselect?
+
+            // we will add click selections to rect/lasso selections points
+            var previosSelections = polySelections.points || [];
+
             subtract = evt.shiftKey &&
               (pointOrBinSelected !== undefined ?
                 pointOrBinSelected :
@@ -460,7 +465,7 @@ function selectOnClick(evt, gd, xAxes, yAxes, subplot, dragOptions, polygonOutli
             selectionTesters = multiTester(allSelectionDefs, selectionTesters);
 
             for(i = 0; i < searchTraces.length; i++) {
-                traceSelection = searchTraces[i]._module.selectPoints(searchTraces[i], selectionTesters);
+                traceSelection = searchTraces[i]._module.selectPoints(searchTraces[i], selectionTesters, previosSelections);
                 thisTracesSelection = fillSelectionItem(traceSelection, searchTraces[i]);
 
                 if(selection.length) {
@@ -1107,7 +1112,10 @@ function reselect(gd, xRef, yRef, selectionTesters, searchTraces, plotinfo) {
 
     updateSelectedState(gd, allTesters, {points: allSelections});
 
-    return selectionTesters;
+    return {
+        selectionTesters: selectionTesters,
+        points: allSelections
+    };
 }
 
 

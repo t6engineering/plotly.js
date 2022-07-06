@@ -1,16 +1,20 @@
 'use strict';
 
-module.exports = function selectPoints(searchInfo, selectionTester) {
+module.exports = function selectPoints(searchInfo, selectionTester, selection) {
+    var hadSelection = !!selection;
+    if(!selection) selection = [];
+
     var cd = searchInfo.cd;
     var xa = searchInfo.xaxis;
     var ya = searchInfo.yaxis;
-    var selection = [];
 
     var i, di, ct, x, y;
 
     if(selectionTester === false) {
-        for(i = 0; i < cd.length; i++) {
-            cd[i].selected = 0;
+        if(!hadSelection) {
+            for(i = 0; i < cd.length; i++) {
+                cd[i].selected = 0;
+            }
         }
     } else {
         for(i = 0; i < cd.length; i++) {
@@ -30,7 +34,9 @@ module.exports = function selectPoints(searchInfo, selectionTester) {
                 });
                 di.selected = 1;
             } else {
-                di.selected = 0;
+                if(!hadSelection) {
+                    di.selected = 0;
+                }
             }
         }
     }
