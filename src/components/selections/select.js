@@ -1,7 +1,6 @@
 'use strict';
 
 var polybool = require('polybooljs');
-var pointInPolygon = require('point-in-polygon/nested');
 
 var Registry = require('../../registry');
 var dashStyle = require('../drawing').dashStyle;
@@ -32,7 +31,7 @@ var activateLastSelection = require('./draw').activateLastSelection;
 
 var Lib = require('../../lib');
 var ascending = Lib.sorterAsc;
-var polygon = require('../../lib/polygon');
+var libPolygon = require('../../lib/polygon');
 var throttle = require('../../lib/throttle');
 var getFromId = require('../../plots/cartesian/axis_ids').getFromId;
 var clearGlCanvases = require('../../lib/clear_gl_canvases');
@@ -42,8 +41,9 @@ var redrawReglTraces = require('../../plot_api/subroutines').redrawReglTraces;
 var constants = require('./constants');
 var MINSELECT = constants.MINSELECT;
 
-var filteredPolygon = polygon.filter;
-var polygonTester = polygon.tester;
+var filteredPolygon = libPolygon.filter;
+var polygonTester = libPolygon.tester;
+var polygonContains = libPolygon.contains;
 
 var helpers = require('./helpers');
 var p2r = helpers.p2r;
@@ -596,7 +596,7 @@ function multiTester(list) {
         if(isPointSelectionDef(list[i])) {
             testers.push(newPointNumTester(list[i]));
         } else {
-            var tester = polygon.tester(list[i]);
+            var tester = polygonTester(list[i]);
             tester.subtract = !!list[i].subtract;
             testers.push(tester);
 
@@ -1402,7 +1402,12 @@ function getSubtract(polygon, previousPolygons) {
 
         // find out if a point of polygon is inside previous polygons
         for(var k = 0; k < polygon.length; k++) {
-            if(pointInPolygon(polygon[k], previousPolygon)) {
+            if(polygonContains(previousPolygon, polygon[k], false, {
+                xmin: previousPolygon.xmin,
+                xmax: previousPolygon.xmax,
+                ymin: previousPolygon.ymin,
+                ymax: previousPolygon.ymax
+            })) {
                 subtract = !subtract;
                 break;
             }
