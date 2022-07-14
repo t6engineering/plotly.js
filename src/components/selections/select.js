@@ -933,6 +933,7 @@ function updateSelectedState(gd, searchTraces, eventData) {
     } else {
         for(i = 0; i < searchTraces.length; i++) {
             trace = searchTraces[i].cd[0].trace;
+
             delete trace.selectedpoints;
             delete trace._input.selectedpoints;
             if(trace._fullInput !== trace) {
@@ -1162,7 +1163,7 @@ function reselect(gd, selectionTesters, searchTraces, dragOptions) {
                     }
                 }
             }
-            var selection = _doSelect(_selectionTesters, _searchTraces);
+            var selection = _doSelect(_selectionTesters, onlyCartesian(_searchTraces));
 
             allSelections = allSelections.concat(selection);
             allSearchTraces = allSearchTraces.concat(_searchTraces);
@@ -1231,6 +1232,20 @@ function reselect(gd, selectionTesters, searchTraces, dragOptions) {
         selectionTesters: selectionTesters
     };
 }
+
+function onlyCartesian(searchTraces) {
+    var list = [];
+    for(var i = 0; i < searchTraces.length; i++) {
+        var s = searchTraces[i];
+        var cd0 = s.cd[0];
+        var trace = cd0.trace;
+        if(trace.xaxis && trace.yaxis) {
+            list.push(s);
+        }
+    }
+    return list;
+}
+
 
 function epmtySplomSelectionBatch(gd) {
     var cd = gd.calcdata;
