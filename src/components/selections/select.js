@@ -1053,11 +1053,12 @@ function _doSelect(selectionTesters, searchTraces) {
 
 function reselect(gd, selectionTesters, searchTraces, dragOptions) {
     var hadSearchTraces = !!searchTraces;
-    var plotinfo, xRef, yRef;
+    var plotinfo, xRef, yRef, nonCartesianSubplot;
     if(dragOptions) {
         plotinfo = dragOptions.plotinfo;
         xRef = dragOptions.xaxes[0]._id;
         yRef = dragOptions.yaxes[0]._id;
+        nonCartesianSubplot = dragOptions.subplot;
     }
 
     var allSelections = [];
@@ -1163,7 +1164,7 @@ function reselect(gd, selectionTesters, searchTraces, dragOptions) {
                     }
                 }
             }
-            var selection = _doSelect(_selectionTesters, onlyCartesian(_searchTraces));
+            var selection = _doSelect(_selectionTesters, filterCartesian(_searchTraces, nonCartesianSubplot));
 
             allSelections = allSelections.concat(selection);
             allSearchTraces = allSearchTraces.concat(_searchTraces);
@@ -1233,14 +1234,16 @@ function reselect(gd, selectionTesters, searchTraces, dragOptions) {
     };
 }
 
-function onlyCartesian(searchTraces) {
+function filterCartesian(searchTraces, nonCartesianSubplot) {
     var list = [];
     for(var i = 0; i < searchTraces.length; i++) {
         var s = searchTraces[i];
         var cd0 = s.cd[0];
         var trace = cd0.trace;
         if(trace.xaxis && trace.yaxis) {
-            list.push(s);
+            if(nonCartesianSubplot) list.push(s);
+        } else {
+            if(!nonCartesianSubplot) list.push(s);
         }
     }
     return list;
