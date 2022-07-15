@@ -769,7 +769,7 @@ function determineSearchTraces(gd, xAxes, yAxes, subplot) {
 
         if(
             hasSubplot({subplot: subplot}) &&
-            (trace.subplot === subplot || trace.geo === subplot)
+            (trace.subplot === subplot || trace.geo === subplot || trace.type === 'sankey')
         ) {
             searchTraces.push(createSearchInfo(trace._module, cd, xAxes[0], yAxes[0]));
         } else if(trace.type === 'splom') {
@@ -779,9 +779,6 @@ function determineSearchTraces(gd, xAxes, yAxes, subplot) {
                 info.scene = gd._fullLayout._splomScenes[trace.uid];
                 searchTraces.push(info);
             }
-        } else if(trace.type === 'sankey') {
-            var sankeyInfo = createSearchInfo(trace._module, cd, xAxes[0], yAxes[0]);
-            searchTraces.push(sankeyInfo);
         } else {
             if(xAxisIds.indexOf(trace.xaxis) === -1) continue;
             if(yAxisIds.indexOf(trace.yaxis) === -1) continue;
