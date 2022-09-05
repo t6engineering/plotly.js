@@ -244,7 +244,7 @@ module.exports = function style(s, gd) {
             }
 
             if(showText) {
-                dEdit.tx = 'Aa';
+                dEdit.tx = '';
                 dEdit.tp = boundVal('textposition', pickFirst);
                 dEdit.ts = 10;
                 dEdit.tc = boundVal('textfont.color', pickFirst);
